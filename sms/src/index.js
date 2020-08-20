@@ -4,10 +4,11 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import Login from "./account/login.component";
+import Table from "./student/table.component";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Login />
+    <Table />
   </React.StrictMode>,
   document.getElementById('root')
 );
