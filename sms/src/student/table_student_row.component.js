@@ -1,6 +1,6 @@
 import React from "react";
 
-const TableRow = props => {
+const Table_student_rowComponent = props => {
 
     return (
         <tr className="text-center">
@@ -29,4 +29,4 @@ const TableRow = props => {
 
 }
 
-export default TableRow;
+export default Table_student_rowComponent;
