@@ -8,16 +8,16 @@ import PopUpAdd from './add_popup_class';
 class TableClass extends Component {
 
     constructor(props) {
-        var class1 = {name: "Class1", id: 1}
-        var class2 = {name: "Class2", id: 2}
-        var class3 = {name: "Class3", id: 3}
+        var class1 = {name: "Class1", id: 1, startDate: "2-01-2019", endDate: "2-11-2019"}
+        var class2 = {name: "Class2", id: 2, startDate: "2-01-2019", endDate: "2-11-2019"}
+        var class3 = {name: "Class3", id: 3, startDate: "2-01-2019", endDate: "2-11-2019"}
         var classArr = [class1, class2, class3]
         super(props);
         this.state = {
             listDisplay: classArr,
-            showBackdrop: false, 
+            showBackdrop: false,
             positiveButton: 'ADD',
-            negativeButton: 'CANCEL', 
+            negativeButton: 'CANCEL',
             isAddClicked: true
         };
     }
@@ -41,7 +41,7 @@ class TableClass extends Component {
     }
 
     handleEdit = (event) => {
-        
+
     }
 
     handleAdd = (event) => {
@@ -70,7 +70,7 @@ class TableClass extends Component {
         return (
             <>
                 <Backdrop show={this.state.showBackdrop} clicked={this.handleClickedBackdrop}/>
-                <PopUpAdd show={this.state.showBackdrop} cancel={this.handleCancel} add={this.state.isAddClicked ? this.handleAdd : this.handleEdit} 
+                <PopUpAdd show={this.state.showBackdrop} cancel={this.handleCancel} add={this.state.isAddClicked ? this.handleAdd : this.handleEdit}
                 positiveButton={this.state.positiveButton} negativeButton={this.state.negativeButton}
                 isAddClicked={this.state.isAddClicked}/>
                 <div className="table-responsive" style={{width: 1000}}>
@@ -116,6 +116,8 @@ class TableClass extends Component {
                             </th>
                             <th>Id</th>
                             <th>Classname</th>
+                            <th>StartDate</th>
+                            <th>EndDate</th>
                             <th colSpan="2">Action</th>
                         </tr>
                         </thead>

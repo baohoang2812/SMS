@@ -14,6 +14,15 @@ const Table_class_rowComponent = props => {
             <td>
                 {props.name}
             </td>
+
+            <td>
+                {props.startDate}
+            </td>
+
+            <td>
+                {props.endDate}
+            </td>
+
             <td>
                 <button className="btn btn-primary">Edit</button>
             </td>
