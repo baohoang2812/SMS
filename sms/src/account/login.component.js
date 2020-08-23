@@ -1,10 +1,7 @@
 import React, {Component} from "react";
-import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './login.css';
 import axios from 'axios';
-
-
-
 
 export default class Login extends Component {
 

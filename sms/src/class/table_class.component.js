@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import Table_class_rowComponent from "./table_class_row.component";
 import "./tableclass.css";
-import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Backdrop from '../backdrop/Backdrop';
+import PopUpAdd from './add_popup_class';
 
 class TableClass extends Component {
 
@@ -13,6 +15,10 @@ class TableClass extends Component {
         super(props);
         this.state = {
             listDisplay: classArr,
+            showBackdrop: false, 
+            positiveButton: 'ADD',
+            negativeButton: 'CANCEL', 
+            isAddClicked: true
         };
     }
 
@@ -24,6 +30,30 @@ class TableClass extends Component {
         event.preventDefault();
         const {name, value} = event.target;
         console.log(value)
+    }
+
+    handleClickedBackdrop = (event) => {
+        this.setState({ showBackdrop: false });
+    }
+
+    handleCancel = (event) => {
+        this.setState({ showBackdrop: false });
+    }
+
+    handleEdit = (event) => {
+        
+    }
+
+    handleAdd = (event) => {
+        //nothing here
+    }
+
+    handlePopupAdd = (event) => {
+        this.setState({ showBackdrop: true, positiveButton: 'ADD', negativeButton: 'CANCEL', isAddClicked: true });
+    }
+
+    handlePopupEdit = (data) => {
+        this.setState({ showBackdrop: true, positiveButton: 'EDIT', negativeButton: 'CANCEL', isAddClicked: false });
     }
 
     render() {
@@ -39,7 +69,11 @@ class TableClass extends Component {
 
         return (
             <>
-                <div class="table-responsive" style={{width: 1000}}>
+                <Backdrop show={this.state.showBackdrop} clicked={this.handleClickedBackdrop}/>
+                <PopUpAdd show={this.state.showBackdrop} cancel={this.handleCancel} add={this.state.isAddClicked ? this.handleAdd : this.handleEdit} 
+                positiveButton={this.state.positiveButton} negativeButton={this.state.negativeButton}
+                isAddClicked={this.state.isAddClicked}/>
+                <div className="table-responsive" style={{width: 1000}}>
                     <h3 align="center">Class list</h3>
                     <form className="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-2">
                         <input className="form-control form-control-sm mr-3 w-75" type="text" placeholder="Search"
@@ -47,11 +81,11 @@ class TableClass extends Component {
                         <input type="submit" value="Search" className="btn btn-secondary"/>
                     </form>
                     <table className="table table-striped table-bordered table-hover" style={{marginTop: 20}}>
-                        <thead class="thead-dark">
+                        <thead className="thead-dark">
                         <tr className="text-center">
                             <th>
                                 <button type="button" className="btn btn-success" data-toggle="modal"
-                                        data-target="#exampleModal">
+                                        data-target="#exampleModal" onClick={this.handlePopupAdd}>
                                     Add new class
                                 </button>
 
@@ -87,7 +121,7 @@ class TableClass extends Component {
                         </thead>
                         <tbody>
                         {this.state.listDisplay ? this.state.listDisplay.map(element => {
-                            return <Table_class_rowComponent {...element}/>;
+                            return <Table_class_rowComponent {...element} clickEdit={this.handlePopupEdit}/>;
                         }) : null
                         }
                         </tbody>

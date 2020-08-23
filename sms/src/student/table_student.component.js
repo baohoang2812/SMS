@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import Table_student_rowComponent from "./table_student_row.component";
 import "./table.css";
-import '../../../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 class TableStudent extends Component {
 
