@@ -13,6 +13,7 @@ export default class Nav extends Component {
     logout(){
         localStorage.removeItem("authToken");
         localStorage.removeItem("username");
+        this.setState ({authToken : null});
     }
 
     componentWillMount() {
