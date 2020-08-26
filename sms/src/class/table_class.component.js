@@ -73,7 +73,7 @@ class TableClass extends Component {
                 <PopUpAdd show={this.state.showBackdrop} cancel={this.handleCancel} add={this.state.isAddClicked ? this.handleAdd : this.handleEdit}
                 positiveButton={this.state.positiveButton} negativeButton={this.state.negativeButton}
                 isAddClicked={this.state.isAddClicked}/>
-                <div className="table-responsive" style={{width: 1000}}>
+                <div className="table-responsive" style={{width: 1000, marginLeft: "auto", marginRight: "auto"}}>
                     <h3 align="center">Class list</h3>
                     <form className="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-2">
                         <input className="form-control form-control-sm mr-3 w-75" type="text" placeholder="Search"

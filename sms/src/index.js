@@ -5,10 +5,12 @@ import * as serviceWorker from './serviceWorker';
 import TableClass from "./class/table_class.component";
 import TableStudent from "./student/table_student.component";
 import Login from "./account/login.component";
+import NavBar from "./nav/navbar.component";
+import App from  "./App";
 
 ReactDOM.render(
   <React.StrictMode>
-    <TableClass />
+      <App/>
   </React.StrictMode>,
   document.getElementById('root')
 );

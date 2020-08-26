@@ -26,12 +26,15 @@ export default class Login extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        console.log(this.state.username + ' ' + this.state.password)
-        axios.post("https://localhost:5001/api/users/try/login", {
+        axios.post("http://localhost:5000/api/auth", {
             username: this.state.username,
             password: this.state.password
         }).then(res => {
-            console.log(res.data.status)
+            localStorage.setItem("authToken", res.data.token);
+            localStorage.setItem("username", res.data.username);
+            console.log("username is: " + res.data.username);
+            console.log("token is: " + localStorage.getItem("authToken"));
+            window.location.reload(false);
         }).catch(error => {
             this.setState({isError: true});
         });
