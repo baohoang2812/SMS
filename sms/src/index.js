@@ -2,9 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import TableClass from "./class/table_class.component";
-import TableStudent from "./student/table_student.component";
-import Login from "./account/login.component";
+import TableClass from './class/Table.component';
+import TableStudent from './student/table_student.component';
+import Login from './account/login.component';
 
 ReactDOM.render(
   <React.StrictMode>
