@@ -1,4 +1,4 @@
-.add_popup_class {
+.popup {
     position: fixed;
     z-index: 111;
     background-color: white;
