@@ -3,17 +3,10 @@ import React, {Component} from 'react';
 export default class Nav extends Component {
 
     constructor(props) {
-        super(props)
-        this.logout = this.logout.bind(this);
+        super(props);
         this.state = {
             authToken: null,
         };
-    }
-
-    logout(){
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("username");
-        this.setState ({authToken : null});
     }
 
     componentWillMount() {
@@ -25,13 +18,11 @@ export default class Nav extends Component {
             <nav className="navbar navbar-expand-lg navbar-light bg-light ">
                     <div className="navbar-nav" style={{marginLeft: "auto", marginRight: 50}}>
                         {
-                             this.state.authToken == null
-                            ? <button onClick={this.logout} className="btn btn-primary">Login</button>
-                            :
+                            localStorage.getItem("authToken") ?
                             <>
                                 <a className="nav-item nav-link" href="#">{localStorage.getItem("username")} </a>
-                                <button onClick={this.logout} className="btn btn-secondary">logout</button>
-                            </>
+                                <button onClick={this.props.logout} className="btn btn-secondary">Logout</button>
+                            </> : null
                         }
                     </div>
             </nav>

@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './login.css';
-import axios from 'axios';
 
 export default class Login extends Component {
 
@@ -20,24 +19,7 @@ export default class Login extends Component {
             isEmpty: true,
             isError: false
         };
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
-    }
-
-    handleSubmit(e) {
-        e.preventDefault();
-        axios.post("http://localhost:5000/api/auth", {
-            username: this.state.username,
-            password: this.state.password
-        }).then(res => {
-            localStorage.setItem("authToken", res.data.token);
-            localStorage.setItem("username", res.data.username);
-            console.log("username is: " + res.data.username);
-            console.log("token is: " + localStorage.getItem("authToken"));
-            window.location.reload(false);
-        }).catch(error => {
-            this.setState({isError: true});
-        });
     }
 
     handleChange = (event) => {
@@ -53,7 +35,7 @@ export default class Login extends Component {
                 alignItems: 'center',
                 justifyContent: 'center',
             }}>
-                <form className="form-signin text-center" onSubmit={this.handleSubmit}>
+                <form className="form-signin text-center" onSubmit={this.props.handleSubmit}>
                     <img className="mb-4" src="https://simpleicon.com/wp-content/uploads/account.png" alt="" width="72" height="72"/>
                     <h1 className="h3 mb-3 font-weight-normal">Please sign in</h1>
                     <div className="form-group">
