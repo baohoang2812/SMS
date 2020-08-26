@@ -2,11 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import TableClass from "./class/table_class.component";
-import TableStudent from "./student/table_student.component";
-import Login from "./account/login.component";
-import NavBar from "./nav/navbar.component";
-import App from  "./App";
+import App from "./App";
 
 ReactDOM.render(
   <React.StrictMode>
