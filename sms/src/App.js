@@ -1,13 +1,11 @@
 import React from 'react';
 import './App.css';
-import Nav from "./nav/navbar.component";
-import TableClass from "./class/table_class.component";
+import Body from './body/Body';
 
 function App() {
   return (
     <div className="App">
-     <Nav/>
-     <TableClass/>
+      <Body/>
     </div>
   );
 }
