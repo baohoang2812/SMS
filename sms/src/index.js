@@ -2,13 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import TableClass from './class/Table.component';
-import TableStudent from './student/table_student.component';
-import Login from './account/login.component';
+import App from './App';
+import { BrowserRouter } from 'react-router-dom';
 
 ReactDOM.render(
   <React.StrictMode>
-    <TableClass />
+      <BrowserRouter>
+          <App/>
+      </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );
