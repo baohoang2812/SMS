@@ -35,7 +35,7 @@ export default class Login extends Component {
                 alignItems: 'center',
                 justifyContent: 'center',
             }}>
-                <form className="form-signin text-center" onSubmit={this.props.handleSubmit}>
+                <form className="form-signin text-center" onSubmit={(e)=>this.props.handleSubmit(e, this.state.username, this.state.password)}>
                     <img className="mb-4" src="https://simpleicon.com/wp-content/uploads/account.png" alt="" width="72" height="72"/>
                     <h1 className="h3 mb-3 font-weight-normal">Please sign in</h1>
                     <div className="form-group">

@@ -25,21 +25,21 @@ class Body extends Component {
         this.setState ({authToken : null});
     }
 
-    handleSubmit(e) {
+    handleSubmit(e, username, password) {
         e.preventDefault();
-        axios.post("http://localhost:5000/api/auth", {
-            username: this.state.username,
-            password: this.state.password
+        axios.post("http://localhost:59677/api/auth", {
+            username,
+            password
         }).then(res => {
             localStorage.setItem("authToken", res.data.token);
             localStorage.setItem("username", res.data.username);
             console.log("username is: " + res.data.username);
             console.log("token is: " + localStorage.getItem("authToken"));
             window.location.reload(false);
+            this.props.history.push('/');
         }).catch(error => {
             this.setState({isError: true});
         });
-        this.props.history.push('/');
     }
 
     render() {

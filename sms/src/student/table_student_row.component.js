@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 
 const Table_student_rowComponent = props => {
 
@@ -19,7 +20,9 @@ const Table_student_rowComponent = props => {
                 {props.lastname}
             </td>
             <td>
-                <button className="btn btn-primary">Edit</button>
+                <Link to={"/student/" + props.id}>
+                    <button className="btn btn-primary">Edit</button>
+                </Link>
             </td>
             <td>
                 <button className="btn btn-danger">Remove</button>
