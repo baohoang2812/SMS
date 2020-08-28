@@ -11,6 +11,7 @@ class TableStudent extends Component {
         super(props);
         this.state = {
             listDisplay: [],
+            searchString: ''
         };
     }
 
@@ -26,10 +27,10 @@ class TableStudent extends Component {
         });
     }
 
-    handelSearch = (event) => {
+    handleSearch = (event) => {
         event.preventDefault();
         const {name, value} = event.target;
-        axios.get("http://localhost:59677/api/students?name=" + value + "&&capacity=20&&pageIndex=1", {
+        axios.get("http://localhost:59677/api/students?name=" + this.state.searchString + "&&capacity=20&&pageIndex=1", {
             headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
         }).then(res => {
             this.setState({
@@ -39,6 +40,16 @@ class TableStudent extends Component {
             this.setState({isError: true});
         });
         console.log(value)
+    }
+
+    handleInput = (event) => {
+        event.preventDefault();
+        const {name, value} = event.target;
+        this.setState(
+            {
+                searchString: value
+            }
+        )
     }
 
     render() {
@@ -56,9 +67,9 @@ class TableStudent extends Component {
             <>
                 <div class="table-responsive" style={{width: 1000, marginLeft: "auto", marginRight: "auto"}}>
                     <h3 align="center">Student list</h3>
-                    <form onSubmit={this.handelSearch} className="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-2">
+                    <form onSubmit={this.handleSearch} className="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-2">
                         <input className="form-control form-control-sm mr-3 w-75" type="text" placeholder="Search"
-                               aria-label="Search"  name="txtSearch"/>
+                               aria-label="Search" name="txtSearch" onChange={this.handleInput}/>
                         <input type="submit" value="Search" className="btn btn-secondary"/>
                     </form>
                     <table className="table table-striped table-bordered table-hover" style={{marginTop: 20}}>
@@ -78,6 +89,7 @@ class TableStudent extends Component {
                         </thead>
                         <tbody>
                         {this.state.listDisplay ? this.state.listDisplay.map(element => {
+                            {console.log(this.state.listDisplay);}
                             return <Table_student_rowComponent {...element}/>;
                         }) : null
                         }

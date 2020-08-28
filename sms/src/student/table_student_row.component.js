@@ -7,12 +7,6 @@ export default class Table_student_rowComponent extends Component {
     constructor(props) {
         super(props);
         this.requestRemove = this.requestRemove.bind(this);
-        this.state = {
-            id: props.id,
-            firstName: props.firstName,
-            lastName: props.lastName,
-            doB: props.doB
-        }
     }
 
     requestRemove() {
@@ -30,24 +24,23 @@ export default class Table_student_rowComponent extends Component {
         return (
             <tr className="text-center">
                 <td>
-
                 </td>
                 <td>
-                    {this.state.id}
-                </td>
-
-                <td>
-                    {this.state.firstName}
+                    {this.props.id}
                 </td>
 
                 <td>
-                    {this.state.lastName}
+                    {this.props.firstName}
+                </td>
+
+                <td>
+                    {this.props.lastName}
                 </td>
                 <td>
-                    {this.state.doB}
+                    {this.props.doB}
                 </td>
                 <td>
-                    <Link to={"/student/" + this.state.id}>
+                    <Link to={"/student/" + this.props.id}>
                         <button className="btn btn-primary">Edit</button>
                     </Link>
                 </td>
