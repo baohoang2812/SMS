@@ -10,7 +10,7 @@ export default class Table_student_rowComponent extends Component {
         this.state = {
             id: props.id,
             firstName: props.firstName,
-            lasName: props.lastName,
+            lastName: props.lastName,
             doB: props.doB
         }
     }
@@ -20,6 +20,7 @@ export default class Table_student_rowComponent extends Component {
             headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
         }).then(res => {
             window.alert("Student removed!");
+            window.location.reload(false);
         }).catch(error => {
             this.setState({isError: true});
         });

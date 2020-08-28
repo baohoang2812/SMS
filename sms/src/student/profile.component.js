@@ -69,17 +69,17 @@ export default class Create extends Component {
     }
 
     loadProfileData(userId) {
-        axios.get("http://localhost:59677/api/students/profile?id=" + userId, {
+        axios.get("http://localhost:59677/api/students?ids=" + userId + "&&capacity=1&&pageIndex=1", {
             headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
         }).then(res => {
             this.setState({
                 file: '',
-                firstname: res.data.data.firstName,
-                lastname: res.data.data.lastName,
-                phone: res.data.data.phone,
-                address: res.data.data.address,
-                dob: res.data.data.doB,
-                classId: res.data.data.classId,
+                firstname: res.data.data[0].firstName,
+                lastname: res.data.data[0].lastName,
+                phone: res.data.data[0].phone,
+                address: res.data.data[0].address,
+                dob: res.data.data[0].doB,
+                classId: res.data.data[0].classId,
                 isNew: false
             });
         }).catch(error => {
@@ -179,9 +179,9 @@ export default class Create extends Component {
 
     getClassNameById(classId) {
         var i;
-        for (i = 0; i < this.state.classes.length; i++) {
+        for (i = 1; i <= this.state.classes.length; i++) {
             if(i == classId) {
-                return this.state.classes[i].name;
+                return this.state.classes[i - 1].name;
             }
         }
     }
@@ -189,9 +189,9 @@ export default class Create extends Component {
     getUnselectedClass(classId) {
         var i;
         var result = [];
-        for (i = 0; i < this.state.classes.length; i++) {
+        for (i = 1; i <= this.state.classes.length; i++) {
             if(i != classId) {
-                result[i] = this.state.classes[i];
+                result[i - 1] = this.state.classes[i - 1];
             }
         }
         return result;
@@ -312,15 +312,12 @@ export default class Create extends Component {
                                             </select>
                                         </div>
                                     </div>
-
                                     <div className="form-group">
                                         <div className="col-xs-6">
                                             <label htmlFor="dob"><h4 style={textTile}>Date Of Birth</h4></label><br/>
                                             <DatePicker style={{width: 650, fontSize: 30}}
-                                                defaultValue={moment(
-                                                    this.state.dob ? this.state.dob : new Date(),
-                                                    dateFormatList[0]
-                                                )}
+                                                value={this.state.dob ? moment(new Date(new Date(this.state.dob).toString()), dateFormatList[0]) :
+                                                    moment(new Date(), dateFormatList[0])}
                                                 onChange={this.handleDateChange}
                                                 format={dateFormatList}
                                             />
