@@ -1,35 +1,59 @@
-import React from "react";
+import React, {Component} from "react";
 import {Link} from "react-router-dom";
+import axios from "axios";
 
-const Table_student_rowComponent = props => {
+export default class Table_student_rowComponent extends Component {
 
-    return (
-        <tr className="text-center">
-            <td>
+    constructor(props) {
+        super(props);
+        this.requestRemove = this.requestRemove.bind(this);
+        this.state = {
+            id: props.id,
+            firstName: props.firstName,
+            lasName: props.lastName,
+            doB: props.doB
+        }
+    }
 
-            </td>
-            <td>
-                {props.id}
-            </td>
+    requestRemove() {
+        axios.delete("http://localhost:59677/api/students/" + this.state.id, {
+            headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
+        }).then(res => {
+            window.alert("Student removed!");
+        }).catch(error => {
+            this.setState({isError: true});
+        });
+    }
 
-            <td>
-               {props.firstname}
-            </td>
+    render() {
+        return (
+            <tr className="text-center">
+                <td>
 
-            <td>
-                {props.lastname}
-            </td>
-            <td>
-                <Link to={"/student/" + props.id}>
-                    <button className="btn btn-primary">Edit</button>
-                </Link>
-            </td>
-            <td>
-                <button className="btn btn-danger">Remove</button>
-            </td>
-        </tr>
-    );
+                </td>
+                <td>
+                    {this.state.id}
+                </td>
 
+                <td>
+                    {this.state.firstName}
+                </td>
+
+                <td>
+                    {this.state.lastName}
+                </td>
+                <td>
+                    {this.state.doB}
+                </td>
+                <td>
+                    <Link to={"/student/" + this.state.id}>
+                        <button className="btn btn-primary">Edit</button>
+                    </Link>
+                </td>
+                <td>
+                    <button className="btn btn-danger" onClick={this.requestRemove}>Remove</button>
+                </td>
+            </tr>
+        );
+    }
 }
-
-export default Table_student_rowComponent;

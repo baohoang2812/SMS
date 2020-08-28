@@ -2,25 +2,31 @@ import React, {Component} from 'react';
 import Table_student_rowComponent from "./table_student_row.component";
 import "./table.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {Link} from "react-router-dom";
+import axios from "axios";
 
 class TableStudent extends Component {
 
     constructor(props) {
-        var person1 = {firstname: "John", lastname: "Doe", id: 1}
-        var person2 = {firstname: "John2", lastname: "Doe2", id: 2}
-        var person3 = {firstname: "John3", lastname: "Doe3", id: 3}
-        var studentArr = [person1, person2, person3]
         super(props);
         this.state = {
-            listDisplay: studentArr,
+            listDisplay: [],
         };
     }
 
     componentDidMount() {
-        console.log("length: " + this.state.listDisplay.length)
+        axios.get("http://localhost:59677/api/students?capacity=20&&pageIndex=1", {
+            headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
+        }).then(res => {
+            this.setState({
+                listDisplay: res.data.data
+            });
+        }).catch(error => {
+            this.setState({isError: true});
+        });
     }
 
-    handelSearch = (event) =>  {
+    handelSearch = (event) => {
         event.preventDefault();
         const {name, value} = event.target;
         console.log(value)
@@ -50,11 +56,14 @@ class TableStudent extends Component {
                         <thead class="thead-dark">
                         <tr className="text-center">
                             <th>
-                                <button className="btn btn-success">Add new student</button>
+                                <Link to={"/student"}>
+                                    <button className="btn btn-success">Add new student</button>
+                                </Link>
                             </th>
                             <th>Id</th>
                             <th>Firstname</th>
                             <th>Lastname</th>
+                            <th>BirthDate</th>
                             <th colSpan="2">Action</th>
                         </tr>
                         </thead>

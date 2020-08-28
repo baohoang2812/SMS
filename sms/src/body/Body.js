@@ -51,6 +51,7 @@ class Body extends Component {
                         <Route exact path='/' component={TableStudent}/>
                         <Route exact path='/students' component={TableStudent}/>
                         <Route path='/student/:id' component={Create}/>
+                        <Route path='/student' component={Create}/>
                         <Route exact path='/class' component={TableClass}/>
                         <Route component={Error}/>
                     </Switch>

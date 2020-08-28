@@ -15,7 +15,7 @@ export default class Nav extends Component {
 
     render() {
         return (
-            <nav className="navbar navbar-expand-lg navbar-light bg-light ">
+            <nav className="navbar navbar-expand-lg navbar-light bg-light " style={{marginBottom: 10}}>
                     <div className="navbar-nav" style={{marginLeft: "auto", marginRight: 50}}>
                         {
                             localStorage.getItem("authToken") ?
