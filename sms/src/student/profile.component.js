@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import regx from "../server_config/regx.config";
 import axios from 'axios';
-import Table_student_rowComponent from "./table_student_row.component";
 
 const validateForm = (errors) => {
     let valid = true;
@@ -157,6 +156,10 @@ export default class Create extends Component {
             id: 3
         }];
         this.state.classes = arrClass;
+    }
+
+    componentDidMount() {
+        const { id } = this.props.match.params;
     }
 
     render() {
