@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import regx from "../server_config/regx.config";
 import axios from 'axios';
+import moment from "moment";
+import {DatePicker} from "antd";
 
 const validateForm = (errors) => {
     let valid = true;
@@ -24,43 +26,20 @@ export default class Create extends Component {
         super(props);
         this.uploadImg = this.uploadImg.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.loadEmptyData = this.loadEmptyData.bind(this);
         this.loadProfileData = this.loadProfileData.bind(this);
-        if (props == null) {
-            this.loadEmptyData()
-        } else {
-            this.loadProfileData(props)
-        }
-    }
-
-    loadProfileData(props) {
-        this.state = {
-            file: props.file,
-            username: props.username,
-            phone: props.phone,
-            address: props.address,
-            formValid: false,
-            errorCount: null,
-            errors: {
-                firstname: '',
-                lastname: '',
-                phone: '',
-                dob: '',
-                address: '',
-                classes: []
-            },
-            passwordHolder: '',
-            isEmpty: true,
-            isNew: false
-        };
-    }
-
-    loadEmptyData() {
+        this.getClassNameById = this.getClassNameById.bind(this);
+        this.getUnselectedClass = this.getUnselectedClass.bind(this);
+        this.handleDateChange = this.handleDateChange.bind(this);
         this.state = {
             file: 'https://i.pinimg.com/736x/5b/b4/8b/5bb48b07fa6e3840bb3afa2bc821b882.jpg',
-            username: 'aaa',
-            phone: '1230302',
-            address: '3131213',
+            id: null,
+            firstname: null,
+            lastname: '',
+            phone: '',
+            address: '',
+            classId: null,
+            classes: [],
+            dob: null,
             formValid: false,
             errorCount: null,
             errors: {
@@ -77,7 +56,36 @@ export default class Create extends Component {
         };
     }
 
+    loadClasses() {
+        axios.get("http://localhost:59677/api/classes?capacity=50&&pageIndex=1",{
+            headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
+        }).then(res => {
+            this.setState({
+                classes : res.data.data
+            });
+        }).catch(error => {
+            this.setState({isError: true});
+        });
+    }
 
+    loadProfileData(userId) {
+        axios.get("http://localhost:59677/api/students?ids=" + userId + "&&capacity=1&&pageIndex=1", {
+            headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
+        }).then(res => {
+            this.setState({
+                file: '',
+                firstname: res.data.data[0].firstName,
+                lastname: res.data.data[0].lastName,
+                phone: res.data.data[0].phone,
+                address: res.data.data[0].address,
+                dob: res.data.data[0].doB,
+                classId: res.data.data[0].classId,
+                isNew: false
+            });
+        }).catch(error => {
+            this.setState({isError: true});
+        });
+    }
 
     handleChangeInput = (event) => {
         this.state.isEmpty = false;
@@ -107,9 +115,9 @@ export default class Create extends Component {
                 break;
             case 'phone':
                 errors.phone =
-                    regx.validPhoneRegex.test(value)
-                        ? ''
-                        : 'Phone is not valid (10 number phone)!';
+                    value.length < 1
+                        ? 'Phone must not be empty!'
+                        : '';
                 break;
         }
 
@@ -131,7 +139,6 @@ export default class Create extends Component {
         }
         this.setState({errorCount: countErrors(this.state.errors)});
         if (this.state.errorCount == 0) {
-
             let data = new FormData(event.target);
             data.append('myImage', this.state.file);
             const config = {
@@ -139,37 +146,74 @@ export default class Create extends Component {
                     'content-type': 'multipart/form-data'
                 }
             };
-            if(this.state.isNew) {
-                axios.post("ToCreateApiMethod");
+            const { firstname, lastname, phone, address, classId, dob, id} = this.state;
+            if (this.state.isNew) {
+                axios.post("http://localhost:59677/api/students", {firstname, lastname, phone, address, dob, classId},{
+                    headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
+                }).then(res => {
+                    window.alert("Student is created!");
+                }).catch(error => {
+                    this.setState({isError: true});
+                });
             } else {
-                axios.post("ToUpdateApiMethod");
+                axios.put("http://localhost:59677/api/students/" + id, {firstname, lastname, phone, address, dob, classId},{
+                    headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
+                }).then(res => {
+                    window.alert("Student is updated!");
+                }).catch(error => {
+                    this.setState({isError: true});
+                });
             }
-
-
-
         }
     }
 
+    handleDateChange = (date, dateString) => {
+        this.setState((prevState) => ({
+            dob: date
+        }));
+    };
+
     componentWillMount() {
-        var arrClass = [{classname: "class one", id: 1}, {classname: "class two", id: 2}, {
-            classname: "class three",
-            id: 3
-        }];
-        this.state.classes = arrClass;
+
+    }
+
+    getClassNameById(classId) {
+        var i;
+        for (i = 1; i <= this.state.classes.length; i++) {
+            if(i == classId) {
+                return this.state.classes[i - 1].name;
+            }
+        }
+    }
+
+    getUnselectedClass(classId) {
+        var i;
+        var result = [];
+        for (i = 1; i <= this.state.classes.length; i++) {
+            if(i != classId) {
+                result[i - 1] = this.state.classes[i - 1];
+            }
+        }
+        return result;
     }
 
     componentDidMount() {
-        const { id } = this.props.match.params;
+        const {id} = this.props.match.params;
+        this.state.id = id;
+        this.loadClasses();
+        if(id != null) {
+         this.loadProfileData(id);
+        }
     }
 
     render() {
+        const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
         const textTile = {
             fontSize: '17px'
         };
         const {errors, formValid} = this.state;
-
         return (
-            <div class="container bootstrap snippet" style={{width: 1000}}>
+            <div className="container bootstrap snippet" style={{width: 1000}}>
                 <div className="row">
                     <div className="col-4">
                         <div className="">
@@ -185,10 +229,8 @@ export default class Create extends Component {
 
                     <div className="col-8">
                         <ul className="nav nav-tabs">
-                            <li className="active"><a data-toggle="tab" href="#home">Home</a></li>
+                            <li className="active"></li>
                         </ul>
-
-
                         <div className="tab-content">
                             <div className="tab-pane active" id="home">
                                 <form className="form" action="#" method="post" id="registrationForm"
@@ -196,10 +238,13 @@ export default class Create extends Component {
                                     <div className="form-group">
 
                                         <div className="col-xs-6">
-                                            <label htmlFor="last_name"><h4 style={textTile}>Firstname</h4></label>
+                                            <label htmlFor="firstname"><h4 style={textTile}>Firstname</h4>
+                                            </label>
                                             <input type="text" className="form-control" name="firstname"
-                                                   id="first_name" placeholder="Firstname"
-                                                   title="enter Firstname." onChange={this.handleChangeInput}/>
+                                                   id="firstname" placeholder="Firstname"
+                                                   title="enter Firstname."
+                                                   onChange={this.handleChangeInput}
+                                                   value={this.state.firstname}/>
                                         </div>
                                     </div>
                                     {errors.firstname.length > 0 &&
@@ -208,10 +253,13 @@ export default class Create extends Component {
                                     <div className="form-group">
 
                                         <div className="col-xs-6">
-                                            <label htmlFor="last_name"><h4 style={textTile}>Lastname</h4></label>
+                                            <label htmlFor="lastname"><h4 style={textTile}>Lastname</h4>
+                                            </label>
                                             <input type="text" className="form-control" name="lastname"
-                                                   id="last_name" placeholder="Lastname"
-                                                   title="enter Lastname ." onChange={this.handleChangeInput}/>
+                                                   id="lastname" placeholder="Lastname"
+                                                   title="enter Lastname ."
+                                                   onChange={this.handleChangeInput}
+                                                   value={this.state.lastname}/>
                                         </div>
                                     </div>
                                     {errors.lastname.length > 0 &&
@@ -221,10 +269,12 @@ export default class Create extends Component {
 
                                         <div className="col-xs-6">
                                             <label htmlFor="phone"><h4 style={textTile}>Phone</h4></label>
-                                            <input type="text" className="form-control" name="phone" id="phone"
+                                            <input type="text" className="form-control" name="phone"
+                                                   id="phone"
                                                    placeholder="enter phone"
                                                    title="enter your phone number if any."
-                                                   onChange={this.handleChangeInput}/>
+                                                   onChange={this.handleChangeInput}
+                                                   value={this.state.phone}/>
                                         </div>
                                     </div>
                                     {errors.phone.length > 0 &&
@@ -233,11 +283,14 @@ export default class Create extends Component {
                                     <div className="form-group">
 
                                         <div className="col-xs-6">
-                                            <label htmlFor="address"><h4 style={textTile}>Address</h4></label>
-                                            <input type="text" className="form-control" name="address" id="address"
+                                            <label htmlFor="address"><h4 style={textTile}>Address</h4>
+                                            </label>
+                                            <input type="text" className="form-control" name="address"
+                                                   id="address"
                                                    placeholder="enter address"
                                                    title="enter address"
-                                                   onChange={this.handleChangeInput}/>
+                                                   onChange={this.handleChangeInput}
+                                                   value={this.state.address}/>
                                         </div>
                                     </div>
                                     {errors.address.length > 0 &&
@@ -246,13 +299,28 @@ export default class Create extends Component {
                                     <div className="form-group">
                                         <div className="col-xs-6">
                                             <label htmlFor="address"><h4 style={textTile}>Class</h4></label>
-                                            <select className="browser-default custom-select custom-select-lg mb-3">
-                                                <option selected>Open this select menu</option>
-                                                {this.state.classes ? this.state.classes.map(element => {
-                                                    return <option value={element.id}>{element.classname}</option>;
+                                            <select onChange={this.handleChangeInput}
+                                                className="browser-default custom-select custom-select-lg mb-3" name="classId">
+                                                {this.state.classId ?
+                                                    (<option selected value={this.state.classId}>{this.getClassNameById(this.state.classId)}</option>) :
+                                                    null}
+                                                {this.state.classes ? this.getUnselectedClass(this.state.classId).map(element => {
+                                                    return <option
+                                                        value={element.id}>{element.name}</option>;
                                                 }) : null
                                                 }
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <div className="col-xs-6">
+                                            <label htmlFor="dob"><h4 style={textTile}>Date Of Birth</h4></label><br/>
+                                            <DatePicker style={{width: 650, fontSize: 30}}
+                                                value={this.state.dob ? moment(new Date(new Date(this.state.dob).toString()), dateFormatList[0]) :
+                                                    moment(new Date(), dateFormatList[0])}
+                                                onChange={this.handleDateChange}
+                                                format={dateFormatList}
+                                            />
                                         </div>
                                     </div>
 
@@ -272,6 +340,7 @@ export default class Create extends Component {
                     </div>
                 </div>
             </div>
-        );
+
+        )
     }
 }
