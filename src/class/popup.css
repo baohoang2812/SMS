@@ -1,0 +1,15 @@
+.popup {
+    position: fixed;
+    z-index: 111;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 1px 1px 1px black;
+    box-sizing: border-box;
+    width: 450px;
+    height: 270px;
+    align-items: center;
+    top: 30%;
+    left: 35%;
+    transition: all 0.3s ease-out;
+    text-align: center;
+}
