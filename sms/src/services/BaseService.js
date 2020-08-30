@@ -4,7 +4,7 @@ import { API } from '../constants/Constants';
 function authFetch(input, init = {}) {
   if (!init.headers) init.headers = {};
   init.headers['Authorization'] =
-    'Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWVpZGVudGlmaWVyIjoidXNlcjEiLCJqdGkiOiJlZDY4NTFmZS01ZWJhLTRmZWMtOTgwNy0wNDVhNDA4ODg1ZGEiLCJleHAiOjIwMDg0ODAyNzMsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTk2NzciLCJhdWQiOiJodHRwOi8vbG9jYWxob3N0OjU5Njc3In0.pg4lHt8ymjsXJuO4sJpkusAkaXQ-krfTnKy7pZLpHe0';
+      'Bearer ' + localStorage.getItem('authToken');
   return fetch(input, init);
 }
 
