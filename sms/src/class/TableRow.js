@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 
 const TableClassRowComponent = (props) => {
   return (
@@ -8,9 +9,9 @@ const TableClassRowComponent = (props) => {
 
       <td>{props.name}</td>
 
-      <td>{props.startDate}</td>
+      <td>{moment(props.startDate).format('DD-MM-YYYY')}</td>
 
-      <td>{props.endDate}</td>
+      <td>{moment(props.endDate).format('DD-MM-YYYY')}</td>
 
       <td>
         <button className='btn btn-primary' onClick={props.clickEdit}>

@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import axios from "axios";
+import moment from 'moment';
 
 export default class Table_student_rowComponent extends Component {
 
@@ -10,10 +11,9 @@ export default class Table_student_rowComponent extends Component {
     }
 
     requestRemove() {
-        axios.delete("http://localhost:59677/api/students/" + this.state.id, {
+        axios.delete("http://localhost:59677/api/students/" + this.props.id, {
             headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
         }).then(res => {
-            window.alert("Student removed!");
             window.location.reload(false);
         }).catch(error => {
             this.setState({isError: true});
@@ -37,7 +37,7 @@ export default class Table_student_rowComponent extends Component {
                     {this.props.lastName}
                 </td>
                 <td>
-                    {this.props.doB}
+                    {moment(this.props.doB).format('DD-MM-YYYY')}
                 </td>
                 <td>
                     <Link to={"/student/" + this.props.id}>

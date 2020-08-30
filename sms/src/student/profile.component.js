@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import regx from "../server_config/regx.config";
 import axios from 'axios';
 import moment from "moment";
 import {DatePicker} from "antd";
+import { API } from '../constants/Constants';
 
 const validateForm = (errors) => {
     let valid = true;
@@ -31,7 +31,7 @@ export default class Create extends Component {
         this.getUnselectedClass = this.getUnselectedClass.bind(this);
         this.handleDateChange = this.handleDateChange.bind(this);
         this.state = {
-            file: 'https://i.pinimg.com/736x/5b/b4/8b/5bb48b07fa6e3840bb3afa2bc821b882.jpg',
+            imageUrl: 'https://economix.fr/assets/image/anonymous.gif?1.0',
             id: null,
             firstname: null,
             lastname: '',
@@ -39,7 +39,7 @@ export default class Create extends Component {
             address: '',
             classId: null,
             classes: [],
-            dob: null,
+            dob: new Date(),
             formValid: false,
             errorCount: null,
             errors: {
@@ -52,12 +52,13 @@ export default class Create extends Component {
             },
             passwordHolder: '',
             isEmpty: true,
-            isNew: true
+            isNew: true,
+            image: null
         };
     }
 
     loadClasses() {
-        axios.get("http://localhost:59677/api/classes?capacity=50&&pageIndex=1",{
+        axios.get(API.END_POINT + "classes?capacity=50&&pageIndex=1",{
             headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
         }).then(res => {
             this.setState({
@@ -69,11 +70,12 @@ export default class Create extends Component {
     }
 
     loadProfileData(userId) {
-        axios.get("http://localhost:59677/api/students?ids=" + userId + "&&capacity=1&&pageIndex=1", {
+        this.setState({isEmtpy: false});
+        axios.get(API.END_POINT + "students?ids=" + userId + "&&capacity=1&&pageIndex=1", {
             headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
         }).then(res => {
             this.setState({
-                file: '',
+                imageUrl: res.data.data[0].imagePath ? res.data.data[0].imagePath : 'https://economix.fr/assets/image/anonymous.gif?1.0',
                 firstname: res.data.data[0].firstName,
                 lastname: res.data.data[0].lastName,
                 phone: res.data.data[0].phone,
@@ -115,9 +117,9 @@ export default class Create extends Component {
                 break;
             case 'phone':
                 errors.phone =
-                    value.length < 1
-                        ? 'Phone must not be empty!'
-                        : '';
+                    /(03|07|08|09|01[2|6|8|9])+([0-9]{8})\b/.test(value)
+                        ? ''
+                        : 'Please enter a valid phone number';
                 break;
         }
 
@@ -126,8 +128,9 @@ export default class Create extends Component {
 
     uploadImg(event) {
         this.setState({
-            file: URL.createObjectURL(event.target.files[0])
-        })
+            imageUrl: URL.createObjectURL(event.target.files[0]),
+            image: event.target.files[0]
+        });
     }
 
     handleSubmit(event) {
@@ -140,26 +143,40 @@ export default class Create extends Component {
         this.setState({errorCount: countErrors(this.state.errors)});
         if (this.state.errorCount == 0) {
             let data = new FormData(event.target);
-            data.append('myImage', this.state.file);
+            data.append('myImage', this.state.imageUrl);
             const config = {
                 headers: {
                     'content-type': 'multipart/form-data'
                 }
             };
-            const { firstname, lastname, phone, address, classId, dob, id} = this.state;
+            const {firstname, lastname, phone, address, classId, dob, id, image} = this.state;
+            let formData = new FormData();
+            formData.append('firstname', firstname);
+            formData.append('lastname', lastname);
+            formData.append('phone', phone);
+            formData.append('address', address);
+            formData.append('classId', classId);
+            formData.append('dob', new Date(dob).toISOString());
+            formData.append('id', id);
+            formData.append('image', image);
             if (this.state.isNew) {
-                axios.post("http://localhost:59677/api/students", {firstname, lastname, phone, address, dob, classId},{
-                    headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
+                axios.post( API.END_POINT + "students", formData,{
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("authToken")}`
+                    }
                 }).then(res => {
-                    window.alert("Student is created!");
+                    this.props.history.push('/students');
                 }).catch(error => {
                     this.setState({isError: true});
                 });
             } else {
-                axios.put("http://localhost:59677/api/students/" + id, {firstname, lastname, phone, address, dob, classId},{
-                    headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
+                axios.put(API.END_POINT + "students/" + id, formData,{
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("authToken")}`
+                    }
                 }).then(res => {
                     window.alert("Student is updated!");
+                    this.props.history.push('/students');
                 }).catch(error => {
                     this.setState({isError: true});
                 });
@@ -178,20 +195,18 @@ export default class Create extends Component {
     }
 
     getClassNameById(classId) {
-        var i;
-        for (i = 1; i <= this.state.classes.length; i++) {
-            if(i == classId) {
-                return this.state.classes[i - 1].name;
+        for (var i = 0; i < this.state.classes.length; i++) {
+            if(this.state.classes[i].id == classId) {
+                return this.state.classes[i].name;
             }
         }
     }
 
     getUnselectedClass(classId) {
-        var i;
         var result = [];
-        for (i = 1; i <= this.state.classes.length; i++) {
-            if(i != classId) {
-                result[i - 1] = this.state.classes[i - 1];
+        for (var i = 0; i < this.state.classes.length; i++) {
+            if(this.state.classes[i].id != classId) {
+                result[i] = this.state.classes[i];
             }
         }
         return result;
@@ -206,6 +221,10 @@ export default class Create extends Component {
         }
     }
 
+    handleCancel = (event) => {
+        this.props.history.push('/students');
+    }
+
     render() {
         const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
         const textTile = {
@@ -217,7 +236,7 @@ export default class Create extends Component {
                 <div className="row">
                     <div className="col-4">
                         <div className="">
-                            <img src={this.state.file}
+                            <img src={this.state.imageUrl}
                                  className="avatar img-circle img-thumbnail" alt="avatar"/>
                             <h6>Upload a different photo...</h6>
                             <input type="file" className="text-center center-block file-upload"
@@ -274,7 +293,7 @@ export default class Create extends Component {
                                                    placeholder="enter phone"
                                                    title="enter your phone number if any."
                                                    onChange={this.handleChangeInput}
-                                                   value={this.state.phone}/>
+                                                   value={this.state.phone} required/>
                                         </div>
                                     </div>
                                     {errors.phone.length > 0 &&
@@ -303,7 +322,7 @@ export default class Create extends Component {
                                                 className="browser-default custom-select custom-select-lg mb-3" name="classId">
                                                 {this.state.classId ?
                                                     (<option selected value={this.state.classId}>{this.getClassNameById(this.state.classId)}</option>) :
-                                                    null}
+                                                    (<option selected>Please choose class</option>)}
                                                 {this.state.classes ? this.getUnselectedClass(this.state.classId).map(element => {
                                                     return <option
                                                         value={element.id}>{element.name}</option>;
@@ -329,6 +348,9 @@ export default class Create extends Component {
                                             <br/>
                                             <button className="btn btn-lg btn-success" type="submit"><i
                                                 className="glyphicon glyphicon-ok-sign"></i> Save
+                                            </button>
+                                            <button className="btn btn-lg btn-danger" type="submit" style={{marginLeft: '10px'}} onClick={this.handleCancel}><i
+                                                className="glyphicon glyphicon-ok-sign"></i> Cancel
                                             </button>
                                         </div>
                                         {this.state.errorCount !== null ? <p className="form-status">Form

@@ -150,7 +150,7 @@ class TableClass extends Component {
     const buttonStyle = {
       width: '150px',
       backgroundColor: '#fcfcfc',
-      borderRadius: '30px 30px 30px 30px',
+      borderRadius: '30px 30px 30px 30px'
     };
 
     const textHeader = {
@@ -186,7 +186,7 @@ class TableClass extends Component {
           ) : null
         ) : null}
 
-        <div className='table-responsive' style={{ width: 1000 }}>
+        <div className='table-responsive' style={{ width: 1000, marginLeft: 'auto', marginRight: 'auto' }}>
           <h3 align='center'>Class list</h3>
           <form className='form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-2'>
             <input

@@ -7,6 +7,7 @@ import Error from '../error/Error';
 import Nav from "../nav/navbar.component";
 import axios from "axios";
 import Create from '../student/profile.component';
+import {API} from "../constants/Constants";
 
 class Body extends Component {
 
@@ -27,7 +28,7 @@ class Body extends Component {
 
     handleSubmit(e, username, password) {
         e.preventDefault();
-        axios.post("http://localhost:59677/api/auth", {
+        axios.post(API.END_POINT + "auth", {
             username,
             password
         }).then(res => {
@@ -35,8 +36,7 @@ class Body extends Component {
             localStorage.setItem("username", res.data.username);
             console.log("username is: " + res.data.username);
             console.log("token is: " + localStorage.getItem("authToken"));
-            window.location.reload(false);
-            this.props.history.push('/');
+            this.props.history.push('/students');
         }).catch(error => {
             this.setState({isError: true});
         });
@@ -60,7 +60,7 @@ class Body extends Component {
                 <>
                     <Nav/>
                     <Switch>
-                        <Route path='/' component={() => <Login handleSubmit={this.handleSubmit}/>}/>
+                        <Route path='/' component={() => <Login handleSubmit={this.handleSubmit} isError={this.state.isError}/>}/>
                     </Switch>
                 </>
             );

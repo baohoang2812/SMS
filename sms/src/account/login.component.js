@@ -40,7 +40,7 @@ export default class Login extends Component {
                     <h1 className="h3 mb-3 font-weight-normal">Please sign in</h1>
                     <div className="form-group">
                         <label htmlFor="inputEmail" className="sr-only">Email address</label>
-                        <input type="email" id="inputEmail" className="form-control-lg" placeholder="Email address" required name="username"
+                        <input type="text" id="inputEmail" className="form-control-lg" placeholder="Email address" required name="username"
                                autoFocus onChange={this.handleChange}/>
                     </div>
 
@@ -50,7 +50,7 @@ export default class Login extends Component {
                                required onChange={this.handleChange}/>
                     </div>
 
-
+                    {this.props.isError ? <span style={{ color: 'red' }}><i>Invalid Username or Password</i></span> : null}
                     <button className="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
                     <p className="mt-5 mb-3 text-muted">&copy; 2017-2020</p>
 

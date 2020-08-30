@@ -12,7 +12,9 @@ class PopupAdd extends Component {
       createModel: {
         name: [],
         startDate: new Date(),
-        endDate: new Date(),
+        endDate: new Date(`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(
+            new Date().getDate() + 1).padStart(2, '0')}`),
+        isFalse: false
       },
     };
   }
@@ -46,21 +48,31 @@ class PopupAdd extends Component {
   };
 
   handleSubmit = (event) => {
-    create(
-      this.state.createModel,
-      async (resp) => {
-        const result = await resp.json();
-        if (resp.ok) {
-          console.log('Create successfully');
-        } else {
-          console.log(result.message);
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-      (final) => {}
-    );
+    let startDate = new Date(this.state.createModel.startDate);
+    let endDate = new Date(this.state.createModel.endDate);
+    console.log(this.state.createModel.startDate + ": " + startDate.getTime());
+    console.log(this.state.createModel.endDate + ": " + endDate.getTime());
+    if (startDate.getTime() >= endDate.getTime()) {
+      this.setState({ isFalse: true });
+      event.preventDefault();
+    } else {
+      this.setState({ isFalse: false });
+      create(
+          this.state.createModel,
+          async (resp) => {
+            const result = await resp.json();
+            if (resp.ok) {
+              console.log('Create successfully');
+            } else {
+              console.log(result.message);
+            }
+          },
+          (error) => {
+            console.log(error);
+          },
+          (final) => {}
+      );
+    }
   };
   render() {
     const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
@@ -90,7 +102,7 @@ class PopupAdd extends Component {
               <div style={{ marginTop: '5px' }}>
                 <label>Start date:</label>{' '}
                 <DatePicker
-                  defaultValue={moment(new Date(), dateFormatList[0])}
+                  defaultValue={moment(this.state.createModel.startDate, dateFormatList[0])}
                   onChange={this.handleStartDateChange}
                   format={dateFormatList}
                 />
@@ -101,7 +113,7 @@ class PopupAdd extends Component {
                 </label>{' '}
                 <DatePicker
                   defaultValue={moment(
-                    new Date().getDate() + 1,
+                    this.state.createModel.endDate,
                     dateFormatList[0]
                   )}
                   onChange={this.handleEndDateChange}
@@ -109,6 +121,7 @@ class PopupAdd extends Component {
                 />
               </div>
             </div>
+            {this.state.isFalse ? <span style={{ color: 'red' }}><i>Start Date should be smaller than end date</i></span> : null}
             <p
               style={{
                 margin: '0',

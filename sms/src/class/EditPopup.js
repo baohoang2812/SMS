@@ -10,6 +10,7 @@ class PopupEdit extends Component {
     super(props);
     this.state = {
       init: true,
+      isFalse: false,
       updateModel: {
         id: props.item.id,
         name: props.item.name ? props.item.name : [],
@@ -48,23 +49,31 @@ class PopupEdit extends Component {
   };
 
   handleSubmit = (event) => {
-    update(
-      this.state.updateModel,
-      this.state.updateModel.id,
-      async (resp) => {
-        const result = await resp.json();
-        if (resp.ok) {
-          console.log('Update successfully');
-          alert('Update successfully');
-        } else {
-          console.log(result.message);
-        }
-      },
-      (err) => {
-        console.log(err);
-      },
-      (final) => {}
-    );
+    let startDate = new Date(this.state.updateModel.startDate);
+    let endDate = new Date(this.state.updateModel.endDate);
+    if (startDate.getTime() >= endDate.getTime()) {
+      this.setState({ isFalse: true });
+      event.preventDefault();
+    } else {
+      this.setState({ isFalse: false });
+      update(
+          this.state.updateModel,
+          this.state.updateModel.id,
+          async (resp) => {
+            const result = await resp.json();
+            if (resp.ok) {
+              console.log('Update successfully');
+              //alert('Update successfully');
+            } else {
+              console.log(result.message);
+            }
+          },
+          (err) => {
+            console.log(err);
+          },
+          (final) => {}
+      );
+    }
   };
 
   render() {
@@ -84,7 +93,7 @@ class PopupEdit extends Component {
               <input
                 type='text'
                 placeholder='Class Name'
-                value={this.props.item.name}
+                value={this.state.updateModel.name}
                 onChange={this.handleNameChange}
                 required
                 style={{ width: '70%' }}
@@ -115,6 +124,7 @@ class PopupEdit extends Component {
                 />
               </div>
             </div>
+            {this.state.isFalse ? <span style={{ color: 'red' }}><i>Start Date should be smaller than end date</i></span> : null}
             <p
               style={{
                 margin: '0',

@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import {NavLink} from "react-router-dom";
+import './navbar.component.css';
 
 export default class Nav extends Component {
 
@@ -15,13 +17,34 @@ export default class Nav extends Component {
 
     render() {
         return (
-            <nav className="navbar navbar-expand-lg navbar-light bg-light " style={{marginBottom: 10}}>
-                    <div className="navbar-nav" style={{marginLeft: "auto", marginRight: 50}}>
+            <nav className="navbar navbar-expand-lg navbar-light bg-light nav-parent" style={{marginBottom: 10}}>
+                    <div className="navbar-nav">
                         {
                             localStorage.getItem("authToken") ?
                             <>
-                                <a className="nav-item nav-link" href="#">{localStorage.getItem("username")} </a>
-                                <button onClick={this.props.logout} className="btn btn-secondary">Logout</button>
+                                <NavLink to={"/students"}
+                                 activeStyle={{
+                                    fontWeight: "bold",
+                                    color: "red",
+                                     marginLeft: '15%'
+                                }} className='first-child-nav'>
+                                    <div className='child-nav'>
+                                        Manage Student
+                                    </div>
+                                </NavLink>
+                                <NavLink to={"/class"}
+                                 activeStyle={{
+                                     fontWeight: "bold",
+                                     color: "red"
+                                 }}>
+                                    <div className='child-nav'>
+                                        Manage Class
+                                    </div>
+                                </NavLink>
+                                <div className="user-info child-nav">
+                                    <div className="username">{localStorage.getItem("username")} </div>
+                                    <button onClick={this.props.logout} className="btn btn-secondary">Logout</button>
+                                </div>
                             </> : null
                         }
                     </div>
