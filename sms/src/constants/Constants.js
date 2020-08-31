@@ -1,6 +1,6 @@
 const API = {
-  END_POINT: 'http://localhost:59677/api/',
-  BASE_URL: 'http://localhost:59677/',
+  END_POINT: 'https://studentmanagementprc.azurewebsites.net/api/',
+  BASE_URL: 'https://studentmanagementprc.azurewebsites.net/',
 };
 
 export { API };

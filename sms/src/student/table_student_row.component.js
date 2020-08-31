@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import axios from "axios";
 import moment from 'moment';
+import {API} from "../constants/Constants";
 
 export default class Table_student_rowComponent extends Component {
 
@@ -11,7 +12,7 @@ export default class Table_student_rowComponent extends Component {
     }
 
     requestRemove() {
-        axios.delete("http://localhost:59677/api/students/" + this.props.id, {
+        axios.delete(API.END_POINT + "students/" + this.props.id, {
             headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
         }).then(res => {
             window.location.reload(false);

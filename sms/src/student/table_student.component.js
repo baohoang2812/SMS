@@ -4,6 +4,7 @@ import "./table.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Link} from "react-router-dom";
 import axios from "axios";
+import {API} from "../constants/Constants";
 
 class TableStudent extends Component {
 
@@ -16,7 +17,7 @@ class TableStudent extends Component {
     }
 
     componentDidMount() {
-        axios.get("http://localhost:59677/api/students?capacity=20&&pageIndex=1", {
+        axios.get(API.END_POINT + "students?capacity=20&&pageIndex=1", {
             headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
         }).then(res => {
             this.setState({
@@ -30,7 +31,7 @@ class TableStudent extends Component {
     handleSearch = (event) => {
         event.preventDefault();
         const {name, value} = event.target;
-        axios.get("http://localhost:59677/api/students?name=" + this.state.searchString + "&&capacity=20&&pageIndex=1", {
+        axios.get(API.END_POINT + "students?name=" + this.state.searchString + "&&capacity=20&&pageIndex=1", {
             headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
         }).then(res => {
             this.setState({
