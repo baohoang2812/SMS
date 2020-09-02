@@ -23,7 +23,7 @@ class Body extends Component {
     logout(){
         localStorage.removeItem("authToken");
         localStorage.removeItem("username");
-        this.setState ({authToken : null});
+        this.setState ({authToken : null, isError: false});
     }
 
     handleSubmit(e, username, password) {
@@ -34,9 +34,13 @@ class Body extends Component {
         }).then(res => {
             localStorage.setItem("authToken", res.data.token);
             localStorage.setItem("username", res.data.username);
-            console.log("username is: " + res.data.username);
-            console.log("token is: " + localStorage.getItem("authToken"));
-            this.props.history.push('/students');
+            console.log(window.location.href.indexOf('student') == -1);
+            console.log(window.location.href.indexOf('class') == -1);
+            if (window.location.href.indexOf('student') == -1 && window.location.href.indexOf('class') == -1) {
+                window.location.href = window.location.href + 'students';
+            } else {
+                window.location.href = window.location.href;
+            }
         }).catch(error => {
             this.setState({isError: true});
         });

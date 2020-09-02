@@ -155,7 +155,9 @@ export default class Create extends Component {
             formData.append('lastname', lastname);
             formData.append('phone', phone);
             formData.append('address', address);
-            formData.append('classId', classId);
+            if (classId != null) {
+                formData.append('classId', classId);
+            }
             formData.append('dob', new Date(dob).toISOString());
             formData.append('id', id);
             formData.append('image', image);
@@ -218,6 +220,7 @@ export default class Create extends Component {
         this.loadClasses();
         if(id != null) {
          this.loadProfileData(id);
+         this.setState({isEmpty: false});
         }
     }
 
@@ -322,7 +325,7 @@ export default class Create extends Component {
                                                 className="browser-default custom-select custom-select-lg mb-3" name="classId">
                                                 {this.state.classId ?
                                                     (<option selected value={this.state.classId}>{this.getClassNameById(this.state.classId)}</option>) :
-                                                    (<option selected>Please choose class</option>)}
+                                                    (<option selected value={null}>Please choose class</option>)}
                                                 {this.state.classes ? this.getUnselectedClass(this.state.classId).map(element => {
                                                     return <option
                                                         value={element.id}>{element.name}</option>;
