@@ -296,7 +296,7 @@ export default class Create extends Component {
                                                    placeholder="enter phone"
                                                    title="enter your phone number if any."
                                                    onChange={this.handleChangeInput}
-                                                   value={this.state.phone} required/>
+                                                   value={this.state.phone}/>
                                         </div>
                                     </div>
                                     {errors.phone.length > 0 &&
