@@ -5,7 +5,7 @@ const TableClassRowComponent = (props) => {
   return (
     <tr className='text-center'>
       <td></td>
-      <td>{props.id}</td>
+      <td>{props.rowIndex}</td>
 
       <td>{props.name}</td>
 

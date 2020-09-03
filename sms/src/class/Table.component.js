@@ -333,10 +333,10 @@ class TableClass extends Component {
                     </div>
                   </div>
                 </th>
-                <th>Id</th>
-                <th>Classname</th>
-                <th>StartDate</th>
-                <th>EndDate</th>
+                <th>No</th>
+                <th>Class Name</th>
+                <th>Start Date</th>
+                <th>End Date</th>
                 <th colSpan='2'>Action</th>
               </tr>
             </thead>
@@ -347,6 +347,7 @@ class TableClass extends Component {
                       <TableClassRowComponent
                         {...element}
                         key={index}
+                        rowIndex = {++index}
                         clickEdit={(e) => {
                           this.handlePopupEdit(e, element.id);
                         }}

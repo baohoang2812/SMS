@@ -27,15 +27,13 @@ export default class Table_student_rowComponent extends Component {
                 <td>
                 </td>
                 <td>
-                    {this.props.id}
+                    {this.props.rowIndex}
                 </td>
-
-                <td>
-                    {this.props.firstName}
-                </td>
-
                 <td>
                     {this.props.lastName}
+                </td>
+                <td>
+                    {this.props.firstName}
                 </td>
                 <td>
                     {moment(this.props.doB).format('DD-MM-YYYY')}

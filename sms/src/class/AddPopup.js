@@ -68,7 +68,7 @@ class PopupAdd extends Component {
                 value={this.state.createModel.name}
                 onChange={this.handleNameChange}
                 style={{ width: '70%' }}
-                required='true'
+                required  
               />
               <br />
               <div style={{ marginTop: '5px' }}>
