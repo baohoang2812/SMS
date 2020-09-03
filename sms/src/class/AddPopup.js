@@ -3,14 +3,13 @@ import './popup.css';
 import 'antd/dist/antd.css';
 import { DatePicker } from 'antd';
 import moment from 'moment';
-import { create } from '../services/ClassService';
 
 class PopupAdd extends Component {
   constructor(props) {
     super(props);
     this.state = {
       createModel: {
-        name: [],
+        name: '',
         startDate: new Date(),
         endDate: new Date(`${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(
             new Date().getDate() + 1).padStart(2, '0')}`),
@@ -33,7 +32,7 @@ class PopupAdd extends Component {
     this.setState((prevState) => ({
       createModel: {
         ...prevState.createModel,
-        startDate: date,
+        startDate: date
       },
     }));
   };
@@ -42,38 +41,11 @@ class PopupAdd extends Component {
     this.setState((prevState) => ({
       createModel: {
         ...prevState.createModel,
-        endDate: date,
+        endDate: date
       },
     }));
   };
 
-  handleSubmit = (event) => {
-    let startDate = new Date(this.state.createModel.startDate);
-    let endDate = new Date(this.state.createModel.endDate);
-    console.log(this.state.createModel.startDate + ": " + startDate.getTime());
-    console.log(this.state.createModel.endDate + ": " + endDate.getTime());
-    if (startDate.getTime() >= endDate.getTime()) {
-      this.setState({ isFalse: true });
-      event.preventDefault();
-    } else {
-      this.setState({ isFalse: false });
-      create(
-          this.state.createModel,
-          async (resp) => {
-            const result = await resp.json();
-            if (resp.ok) {
-              console.log('Create successfully');
-            } else {
-              console.log(result.message);
-            }
-          },
-          (error) => {
-            console.log(error);
-          },
-          (final) => {}
-      );
-    }
-  };
   render() {
     const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
     return (
@@ -93,16 +65,16 @@ class PopupAdd extends Component {
               <input
                 type='text'
                 placeholder='Class Name'
-                value={this.state.value}
+                value={this.state.createModel.name}
                 onChange={this.handleNameChange}
-                required
                 style={{ width: '70%' }}
-              />{' '}
+                required='true'
+              />
               <br />
               <div style={{ marginTop: '5px' }}>
                 <label>Start date:</label>{' '}
                 <DatePicker
-                  defaultValue={moment(this.state.createModel.startDate, dateFormatList[0])}
+                  value={moment(new Date(this.state.createModel.startDate), dateFormatList[0])}
                   onChange={this.handleStartDateChange}
                   format={dateFormatList}
                 />
@@ -112,8 +84,8 @@ class PopupAdd extends Component {
                   End date:
                 </label>{' '}
                 <DatePicker
-                  defaultValue={moment(
-                    this.state.createModel.endDate,
+                    value={moment(
+                    new Date(this.state.createModel.endDate),
                     dateFormatList[0]
                   )}
                   onChange={this.handleEndDateChange}
@@ -121,7 +93,7 @@ class PopupAdd extends Component {
                 />
               </div>
             </div>
-            {this.state.isFalse ? <span style={{ color: 'red' }}><i>Start Date should be smaller than end date</i></span> : null}
+            {this.props.isFalse ? <span style={{ color: 'red' }}><i>Start Date should be smaller than end date</i></span> : null}
             <p
               style={{
                 margin: '0',
@@ -134,16 +106,16 @@ class PopupAdd extends Component {
                 ? 'Continue to Add?'
                 : 'Continue to Edit?'}
             </p>
-            <button className='btn btn-success' onClick={this.handleSubmit}>
+            <div className='btn btn-success' onClick={(e) => {this.props.add(e, this.state.createModel); this.setState({value: ''})}}>
               {this.props.positiveButton}
-            </button>
-            <button
+            </div>
+            <div
               className='btn btn-danger'
               onClick={this.props.cancel}
               style={{ marginLeft: '10px' }}
             >
               {this.props.negativeButton}
-            </button>
+            </div>
           </form>
         </div>
       </>
