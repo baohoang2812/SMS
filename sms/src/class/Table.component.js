@@ -5,7 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Backdrop from '../backdrop/Backdrop';
 import PopUpAdd from './AddPopup';
 import PopupEdit from './EditPopup';
-import { retrieve, deleteClass } from '../services/ClassService';
+import {retrieve, deleteClass, create, update} from '../services/ClassService';
+import moment from 'moment';
 
 class TableClass extends Component {
   constructor(props) {
@@ -21,11 +22,11 @@ class TableClass extends Component {
       editItem: null,
       pageIndex: 1,
       searchValue: [],
+      isFalse: false
     };
   }
 
   componentDidMount() {
-    console.log('length: ' + this.state.listDisplay.length);
     this.loadClassList();
   }
 
@@ -36,16 +37,27 @@ class TableClass extends Component {
   };
   handleSearch = (event) => {
     event.preventDefault();
-    console.log('Search value: ' + this.state.searchValue);
     this.search(this.state.searchValue);
   };
 
   handleClickedBackdrop = (event) => {
-    this.setState({ showBackdrop: false });
+    this.setState({ showBackdrop: false, isFalse: false });
+    if (this.state.isAddClicked) {
+      this.setState({isAddClicked: false});
+    }
+    if (this.state.isEditClicked) {
+      this.setState({isEditClicked: false});
+    }
   };
 
   handleCancel = (event) => {
-    this.setState({ showBackdrop: false });
+    if (this.state.isAddClicked) {
+      this.setState({isAddClicked: false});
+    }
+    if (this.state.isEditClicked) {
+      this.setState({isEditClicked: false});
+    }
+    this.setState({ showBackdrop: false, isFalse: false });
   };
 
   search = (name) => {
@@ -89,12 +101,14 @@ class TableClass extends Component {
       listDisplay: data,
     });
   };
+
   handlePopupAdd = (event) => {
     this.setState({
       showBackdrop: true,
       positiveButton: 'ADD',
       negativeButton: 'CANCEL',
       isAddClicked: true,
+      isEditClicked: false
     });
   };
 
@@ -146,6 +160,63 @@ class TableClass extends Component {
     );
   }
 
+  handleAddNewClass = (event, createModel) => {
+      let startDate = new Date(createModel.startDate);
+      let endDate = new Date(createModel.endDate);
+      if (startDate.getTime() >= endDate.getTime()) {
+        this.setState({ isFalse: true });
+      } else {
+        this.setState({ isFalse: false, isAddClicked: false });
+        createModel.startDate = startDate.toISOString();
+        createModel.endDate = endDate.toISOString();
+        create(
+            createModel,
+            async (resp) => {
+              const result = await resp.json();
+              if (resp.ok) {
+                this.loadClassList();
+                this.setState({showBackdrop: false});
+              } else {
+                console.log(result.message);
+              }
+            },
+            (error) => {
+              console.log(error);
+            },
+            (final) => {}
+        );
+      }
+  }
+
+  handleEdit = (event, updateModel) => {
+    let startDate = new Date(updateModel.startDate);
+    let endDate = new Date(updateModel.endDate);
+    if (startDate.getTime() >= endDate.getTime()) {
+      this.setState({ isFalse: true });
+    } else {
+      this.setState({ isFalse: false });
+      updateModel.startDate = startDate.toISOString();
+      updateModel.endDate = endDate.toISOString();
+      update(
+          updateModel,
+          updateModel.id,
+          async (resp) => {
+            const result = await resp.json();
+            if (resp.ok) {
+              this.loadClassList();
+              this.setState({showBackdrop: false, isEditClicked: false });
+            } else {
+              console.log(result.message);
+            }
+          },
+          (err) => {
+            console.log(err);
+          },
+          (final) => {}
+      );
+    }
+  }
+
   render() {
     const buttonStyle = {
       width: '150px',
@@ -167,10 +238,11 @@ class TableClass extends Component {
           <PopUpAdd
             show={this.state.showBackdrop}
             cancel={this.handleCancel}
-            add={this.state.isAddClicked ? this.handleAdd : this.handleEdit}
+            add={this.handleAddNewClass}
             positiveButton={this.state.positiveButton}
             negativeButton={this.state.negativeButton}
             isAddClicked={this.state.isAddClicked}
+            isFalse={this.state.isFalse}
           />
         ) : null}
         {this.state.isEditClicked ? (
@@ -182,6 +254,7 @@ class TableClass extends Component {
               positiveButton={this.state.positiveButton}
               negativeButton={this.state.negativeButton}
               item={this.state.editItem}
+              isFalse={this.state.isFalse}
             />
           ) : null
         ) : null}

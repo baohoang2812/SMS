@@ -4,6 +4,8 @@ import 'antd/dist/antd.css';
 import { DatePicker } from 'antd';
 import moment from 'moment';
 import { update } from '../services/ClassService';
+import axios from "axios";
+import {API} from "../constants/Constants";
 
 class PopupEdit extends Component {
   constructor(props) {
@@ -12,10 +14,10 @@ class PopupEdit extends Component {
       init: true,
       isFalse: false,
       updateModel: {
-        id: props.item.id,
-        name: props.item.name ? props.item.name : [],
-        startDate: props.item.startDate ? props.item.startDate : [],
-        endDate: props.item.endDate ? props.item.endDate : [],
+        id: '',
+        name: '',
+        startDate: '',
+        endDate: ''
       },
     };
   }
@@ -34,7 +36,7 @@ class PopupEdit extends Component {
     this.setState((prevState) => ({
       updateModel: {
         ...prevState.updateModel,
-        startDate: date,
+        startDate: new Date(date)
       },
     }));
   };
@@ -43,38 +45,31 @@ class PopupEdit extends Component {
     this.setState((prevState) => ({
       updateModel: {
         ...prevState.updateModel,
-        endDate: date,
+        endDate: new Date(date)
       },
     }));
   };
 
-  handleSubmit = (event) => {
-    let startDate = new Date(this.state.updateModel.startDate);
-    let endDate = new Date(this.state.updateModel.endDate);
-    if (startDate.getTime() >= endDate.getTime()) {
-      this.setState({ isFalse: true });
-      event.preventDefault();
-    } else {
-      this.setState({ isFalse: false });
-      update(
-          this.state.updateModel,
-          this.state.updateModel.id,
-          async (resp) => {
-            const result = await resp.json();
-            if (resp.ok) {
-              console.log('Update successfully');
-              //alert('Update successfully');
-            } else {
-              console.log(result.message);
-            }
-          },
-          (err) => {
-            console.log(err);
-          },
-          (final) => {}
-      );
-    }
-  };
+  loadClassData = (classId) => {
+    this.setState({isEmtpy: false});
+    axios.get(API.END_POINT + "classes?ids=" + classId + "&&capacity=1&&pageIndex=1", {
+      headers: {Authorization: `Bearer ${localStorage.getItem("authToken")}`}
+    }).then(res => {
+      this.setState({updateModel: {
+          id: res.data.data[0].id,
+          name: res.data.data[0].name,
+          startDate: res.data.data[0].startDate,
+          endDate: res.data.data[0].endDate
+        }
+      });
+    }).catch(error => {
+      this.setState({isError: true});
+    });
+  }
+
+  componentDidMount() {
+    this.loadClassData(this.props.item.id);
+  }
 
   render() {
     const dateFormatList = ['DD/MM/YYYY', 'DD/MM/YY'];
@@ -84,7 +79,7 @@ class PopupEdit extends Component {
           className='popup'
           style={{
             transform: this.props.show ? 'translateY(0)' : 'translateY(-100vh)',
-            opacity: this.props.show ? '1' : '0',
+            opacity: this.props.show ? '1' : '0'
           }}
         >
           <h3 style={{ marginTop: '10px' }}>Edit class</h3>
@@ -102,8 +97,8 @@ class PopupEdit extends Component {
               <div style={{ marginTop: '5px' }}>
                 <label>Start date:</label>{' '}
                 <DatePicker
-                  defaultValue={moment(
-                    new Date(this.props.item.startDate),
+                  value={moment(
+                    new Date(this.state.updateModel.startDate),
                     dateFormatList[0]
                   )}
                   onChange={this.handleStartDateChange}
@@ -115,8 +110,8 @@ class PopupEdit extends Component {
                   End date:
                 </label>{' '}
                 <DatePicker
-                  defaultValue={moment(
-                    new Date(this.props.item.endDate),
+                  value={moment(
+                    new Date(this.state.updateModel.endDate),
                     dateFormatList[0]
                   )}
                   onChange={this.handleEndDateChange}
@@ -124,7 +119,7 @@ class PopupEdit extends Component {
                 />
               </div>
             </div>
-            {this.state.isFalse ? <span style={{ color: 'red' }}><i>Start Date should be smaller than end date</i></span> : null}
+            {this.props.isFalse ? <span style={{ color: 'red' }}><i>Start Date should be smaller than end date</i></span> : null}
             <p
               style={{
                 margin: '0',
@@ -135,16 +130,16 @@ class PopupEdit extends Component {
             >
               Continue ?
             </p>
-            <button className='btn btn-success' onClick={this.handleSubmit}>
+            <div className='btn btn-success' onClick={(event) => this.props.submit(event, this.state.updateModel)}>
               {this.props.positiveButton}
-            </button>
-            <button
+            </div>
+            <div
               className='btn btn-danger'
               onClick={this.props.cancel}
               style={{ marginLeft: '10px' }}
             >
               {this.props.negativeButton}
-            </button>
+            </div>
           </form>
         </div>
       </>
